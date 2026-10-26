@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Your FleaSpace flea-market stall reservation confirmation.">
+    <meta name="theme-color" content="#FEFEFE">
+    <title>Reservation confirmation — FleaSpace</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23E0E7D7'/%3E%3Cpath d='M9 18h22v13H9zM7 17l3-9h20l3 9H7z' fill='%23B7C396' stroke='%232B2F26' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M7 17h26M12 8l-2 9m8-9v9m8-9 2 9' fill='none' stroke='%23BA9A91' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/data.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="index.html" aria-label="FleaSpace home">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <nav class="header-actions" aria-label="Main navigation">
+          <a class="button button-primary button-small" href="markets.html">Book a spot</a>
+          <button class="button button-secondary button-small" type="button" data-contact-open>Contact</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="confirmation-main" tabindex="-1">
+      <section class="confirmation-page page-width" aria-labelledby="confirmation-title">
+        <article class="confirmation-card" data-confirmation-card>
+          <div class="confirmation-heading">
+            <span class="confirmation-check" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m8 16 5.5 5.5L24 10"/></svg></span>
+            <div>
+              <p class="eyebrow">All set for market day</p>
+              <h1 id="confirmation-title">Confirmed<span>.</span></h1>
+              <p class="confirmation-lead" data-confirmation-message>Reservation confirmed. No need to wait for a reply.</p>
+            </div>
+            <p class="confirmation-number"><small>Confirmation no.</small><strong data-confirmation-number></strong></p>
+          </div>
+
+          <div class="confirmation-content" data-confirmation-content>
+            <section class="confirmation-details" aria-label="Reservation details">
+              <div class="confirmation-detail-heading">
+                <span class="eyebrow">Your market day</span>
+                <span class="confirmed-badge"><span aria-hidden="true">✓</span> Spot secured</span>
+              </div>
+              <dl class="confirmation-detail-grid">
+                <div class="confirmation-detail market-detail-wide">
+                  <dt>Market</dt>
+                  <dd data-confirmation-market></dd>
+                </div>
+                <div class="confirmation-detail">
+                  <dt>Date</dt>
+                  <dd data-confirmation-date></dd>
+                </div>
+                <div class="confirmation-detail">
+                  <dt>Market hours</dt>
+                  <dd data-confirmation-hours></dd>
+                </div>
+                <div class="confirmation-detail confirmation-stall-number">
+                  <dt>Your stall</dt>
+                  <dd data-confirmation-stall></dd>
+                </div>
+                <div class="confirmation-detail">
+                  <dt>Set-up time</dt>
+                  <dd data-confirmation-setup></dd>
+                </div>
+                <div class="confirmation-detail confirmation-fee-detail">
+                  <dt>Stall fee</dt>
+                  <dd><strong data-confirmation-fee></strong><small>Pay at the entrance on arrival (cash or card).</small></dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="confirmation-mini-map-card" aria-labelledby="mini-map-title">
+              <div class="mini-map-heading">
+                <div>
+                  <span class="eyebrow">Find your place</span>
+                  <h2 id="mini-map-title">Your stall, marked.</h2>
+                </div>
+                <span class="mini-map-tag" data-mini-map-stall></span>
+              </div>
+              <div class="confirmation-mini-map" data-confirmation-map role="img" aria-label="Mini map of the market showing your reserved stall"></div>
+              <p class="mini-map-caption"><span aria-hidden="true"></span> Your stall is marked in clay. Enter via the walkway.</p>
+            </section>
+          </div>
+
+          <div class="confirmation-actions" data-confirmation-actions>
+            <button class="button button-primary button-arrow print-button" type="button" data-print>
+              Download PDF
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m-4-4 4 4 4-4M4 16h12"/></svg>
+            </button>
+            <button class="button button-secondary contact-organizer" type="button" data-contact-open>
+              Questions? Contact the organizer
+            </button>
+            <a class="button button-secondary home-button" href="index.html">Back to home</a>
+            <p class="print-helper">Opens print: choose Save as PDF</p>
+          </div>
+        </article>
+
+        <section class="confirmation-empty-state" data-confirmation-empty hidden aria-labelledby="empty-title">
+          <span class="empty-state-icon" aria-hidden="true">
+            <svg viewBox="0 0 40 40"><path d="M7 17h26l-3-10H10L7 17Zm0 0c0 4 5 5 7 1 2 4 7 3 7-1 0 4 5 5 7 1 2 4 7 3 7-1M10 19v14m20-14v14M6 33h28"/></svg>
+          </span>
+          <p class="eyebrow">Your market day is waiting</p>
+          <h2 id="empty-title">No reservation <em>just yet.</em></h2>
+          <p>Choose a market, pick the stall that suits you, and your confirmation will be right here.</p>
+          <a class="button button-primary button-arrow" href="markets.html">Find a market<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-5-5 5 5-5 5"/></svg></a>
+        </section>
+        <p class="sr-only" data-app-status role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner page-width">
+        <a class="wordmark footer-wordmark" href="index.html">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <p class="footer-disclaimer">Prototype for a university project. Markets, dates, fees and availability are sample data.</p>
+        <a class="reset-link" href="#reset-demo-data" data-reset-demo>Reset demo data</a>
+        <p class="footer-credit">Made for a more certain market morning <span aria-hidden="true">✳</span></p>
+        <p class="sr-only" data-app-status role="status" aria-live="polite"></p>
+      </div>
+    </footer>
+
+    <dialog class="contact-dialog" aria-labelledby="contact-title" data-contact-dialog>
+      <div class="dialog-inner">
+        <button class="dialog-close" type="button" aria-label="Close contact dialog" data-contact-close>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+        <span class="dialog-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M5 8h22v16H5z"/><path d="m6 9 10 8 10-8"/></svg>
+        </span>
+        <p class="eyebrow">We'd love to hear from you</p>
+        <h2 id="contact-title">Say hello.</h2>
+        <p class="dialog-intro">Questions about a market or your stall? Get in touch with the organizer.</p>
+        <a class="contact-option" href="mailto:organizers@fleaspace.example">
+          <span class="contact-option-icon" aria-hidden="true">✉</span>
+          <span><small>Email</small><strong>organizers@fleaspace.example</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="contact-option" href="https://www.instagram.com/fleaspace.berlin/" target="_blank" rel="noreferrer">
+          <span class="contact-option-icon contact-social" aria-hidden="true">◎</span>
+          <span><small>Instagram</small><strong>@fleaspace.berlin</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <p class="sample-note">These are sample contact details for this prototype.</p>
+      </div>
+    </dialog>
+  </body>
+</html>

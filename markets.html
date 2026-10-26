@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore Berlin flea markets, compare dates and fees, and find an available stall with FleaSpace.">
+    <meta name="theme-color" content="#FEFEFE">
+    <title>Flea markets in Berlin — FleaSpace</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23E0E7D7'/%3E%3Cpath d='M9 18h22v13H9zM7 17l3-9h20l3 9H7z' fill='%23B7C396' stroke='%232B2F26' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M7 17h26M12 8l-2 9m8-9v9m8-9 2 9' fill='none' stroke='%23BA9A91' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/data.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="index.html" aria-label="FleaSpace home">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <nav class="header-actions" aria-label="Main navigation">
+          <a class="button button-primary button-small" href="markets.html" aria-current="page">Book a spot</a>
+          <button class="button button-secondary button-small" type="button" data-contact-open>Contact</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="markets-main" tabindex="-1">
+      <section class="markets-page page-width" aria-labelledby="markets-title">
+        <a class="back-link" href="index.html">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m5 5-5-5 5-5"/></svg>
+          Back home
+        </a>
+        <div class="markets-heading">
+          <div>
+            <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Find your kind of Sunday</p>
+            <h1 id="markets-title">Flea markets <span class="heading-break">in Berlin</span></h1>
+          </div>
+          <p class="markets-intro">Three lovely spots to browse, sell, and meet your next favourite thing. Pick the one that feels right.</p>
+        </div>
+
+        <div class="markets-layout">
+          <section class="market-list" aria-label="Available flea markets" data-market-list>
+            <p class="market-list-heading"><span>Upcoming markets</span><span class="market-count" data-market-count></span></p>
+            <div class="market-cards" data-market-cards></div>
+          </section>
+
+          <aside class="berlin-map-card" aria-label="Map of flea market locations">
+            <div class="map-card-heading">
+              <span class="map-kicker">A little orientation</span>
+              <h2>Find your corner<br>of <em>Berlin.</em></h2>
+            </div>
+            <div class="berlin-map">
+              <svg class="district-map" viewBox="0 0 500 450" role="img" aria-labelledby="map-title map-description">
+                <title id="map-title">Stylised map of Berlin flea market locations</title>
+                <desc id="map-description">Abstract neighbourhood shapes with locations for Mauerpark, Boxhagener Platz, and RAW Gelände flea markets.</desc>
+                <path class="district district-one" d="m70 47 74-17 52 29 47-8 41 31-13 43-57 14-22 36-58-14-20-42-55-7-30-34Z"/>
+                <path class="district district-two" d="m271 82 57-21 72 20 41 40-16 51-44 21-49-19-52 9-35-35 17-23Z"/>
+                <path class="district district-three" d="m58 151 61-19 36 31 58-3 24 47-38 43-69-7-45 19-47-36Z"/>
+                <path class="district district-four" d="m236 174 54-22 54 18 33 46-17 57-55 24-48-17-38-44Z"/>
+                <path class="district district-five" d="m372 193 55-15 37 39-18 55 15 44-45 42-49-25-13-51 27-36Z"/>
+                <path class="district district-six" d="m121 272 52-30 54 23 24 49-23 56-57 27-52-22-22-47Z"/>
+                <path class="district district-seven" d="m252 280 53-7 53 27 15 49-37 49-62 9-35-35 13-46Z"/>
+                <path class="district district-eight" d="m63 317 41-31 43 24 7 52-33 38-48-16-24-34Z"/>
+                <path class="map-river" d="M37 210c42-24 64 18 99 9s55-35 91-15 53 41 93 22 54-50 102-34 45 37 59 24"/>
+                <path class="map-river-echo" d="M58 213c34-14 50 18 80 12s55-32 86-15 52 36 87 19 59-48 96-33 49 30 71 22"/>
+                <path class="map-road" d="M174 41c42 46 61 78 79 119s32 82 58 118 52 53 84 99"/>
+                <path class="map-road" d="M421 68c-49 37-84 71-111 106s-48 72-83 102-64 39-105 59"/>
+              </svg>
+
+              <a class="map-pin map-pin-mauerpark" href="stalls.html?market=mauerpark" data-market-highlight="mauerpark" aria-label="Mauerpark Flea, view stalls">
+                <span class="pin-dot" aria-hidden="true"><span></span></span>
+                <span class="pin-label"><strong>Mauerpark</strong><small>Sunday market</small></span>
+              </a>
+              <a class="map-pin map-pin-boxhagener" href="stalls.html?market=boxhagener-platz" data-market-highlight="boxhagener-platz" aria-label="Boxhagener Platz Flea, view stalls">
+                <span class="pin-dot" aria-hidden="true"><span></span></span>
+                <span class="pin-label"><strong>Boxhagener<br>Platz</strong><small>Sunday market</small></span>
+              </a>
+              <a class="map-pin map-pin-raw" href="stalls.html?market=raw-gelaende" data-market-highlight="raw-gelaende" aria-label="RAW Gelaende Flea, view stalls">
+                <span class="pin-dot" aria-hidden="true"><span></span></span>
+                <span class="pin-label"><strong>RAW Gelände</strong><small>Saturday market</small></span>
+              </a>
+            </div>
+            <p class="map-caption"><span class="map-caption-dot" aria-hidden="true"></span> Stylised map, not to scale.</p>
+            <span class="map-decoration map-decoration-one" aria-hidden="true">✳</span>
+            <span class="map-decoration map-decoration-two" aria-hidden="true"></span>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner page-width">
+        <a class="wordmark footer-wordmark" href="index.html">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <p class="footer-disclaimer">Prototype for a university project. Markets, dates, fees and availability are sample data.</p>
+        <a class="reset-link" href="#reset-demo-data" data-reset-demo>Reset demo data</a>
+        <p class="footer-credit">Made for a more certain market morning <span aria-hidden="true">✳</span></p>
+        <p class="sr-only" data-app-status role="status" aria-live="polite"></p>
+      </div>
+    </footer>
+
+    <dialog class="contact-dialog" aria-labelledby="contact-title" data-contact-dialog>
+      <div class="dialog-inner">
+        <button class="dialog-close" type="button" aria-label="Close contact dialog" data-contact-close>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+        <span class="dialog-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M5 8h22v16H5z"/><path d="m6 9 10 8 10-8"/></svg>
+        </span>
+        <p class="eyebrow">We'd love to hear from you</p>
+        <h2 id="contact-title">Say hello.</h2>
+        <p class="dialog-intro">Questions about a market or your stall? Get in touch with the organizer.</p>
+        <a class="contact-option" href="mailto:organizers@fleaspace.example">
+          <span class="contact-option-icon" aria-hidden="true">✉</span>
+          <span><small>Email</small><strong>organizers@fleaspace.example</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="contact-option" href="https://www.instagram.com/fleaspace.berlin/" target="_blank" rel="noreferrer">
+          <span class="contact-option-icon contact-social" aria-hidden="true">◎</span>
+          <span><small>Instagram</small><strong>@fleaspace.berlin</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <p class="sample-note">These are sample contact details for this prototype.</p>
+      </div>
+    </dialog>
+  </body>
+</html>

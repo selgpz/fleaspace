@@ -1,0 +1,40 @@
+window.FLEASPACE_RESERVATION_KEY = "fleaspaceReservation";
+
+window.FLEASPACE_MARKETS = [
+  {
+    id: "mauerpark",
+    name: "Mauerpark Flea",
+    date: "Sun 15 Nov 2026",
+    hours: "8:00 to 16:00",
+    setup: "7:00 to 8:00",
+    fee: 15,
+    currency: "EUR",
+    stallCount: 10,
+    stallSize: "2 x 1.5 m",
+    takenStalls: [1, 4, 8, 10],
+  },
+  {
+    id: "boxhagener-platz",
+    name: "Boxhagener Platz Flea",
+    date: "Sun 22 Nov 2026",
+    hours: "8:00 to 16:00",
+    setup: "7:00 to 8:00",
+    fee: 12,
+    currency: "EUR",
+    stallCount: 10,
+    stallSize: "2 x 1.5 m",
+    takenStalls: [3, 6, 9],
+  },
+  {
+    id: "raw-gelaende",
+    name: "RAW Gelaende Flea",
+    date: "Sat 28 Nov 2026",
+    hours: "9:00 to 17:00",
+    setup: "8:00 to 9:00",
+    fee: 18,
+    currency: "EUR",
+    stallCount: 10,
+    stallSize: "2 x 1.5 m",
+    takenStalls: [1, 2, 3, 4, 5, 6, 7, 8],
+  },
+];

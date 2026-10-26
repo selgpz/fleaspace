@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Choose your exact flea-market stall in Berlin. See the price, market rules and set-up details before you reserve.">
+    <meta name="theme-color" content="#FEFEFE">
+    <title>Choose your stall — FleaSpace</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23E0E7D7'/%3E%3Cpath d='M9 18h22v13H9zM7 17l3-9h20l3 9H7z' fill='%23B7C396' stroke='%232B2F26' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M7 17h26M12 8l-2 9m8-9v9m8-9 2 9' fill='none' stroke='%23BA9A91' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/data.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="wordmark" href="index.html" aria-label="FleaSpace home">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <nav class="header-actions" aria-label="Main navigation">
+          <a class="button button-primary button-small" href="markets.html">Book a spot</a>
+          <button class="button button-secondary button-small" type="button" data-contact-open>Contact</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="stalls-main" tabindex="-1">
+      <div class="stalls-page page-width">
+        <a class="back-link" href="markets.html">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m5 5-5-5 5-5"/></svg>
+          Back to markets
+        </a>
+        <header class="stall-page-heading">
+          <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Your market morning, mapped out</p>
+          <h1 data-market-name>Choose your <em>stall.</em></h1>
+          <p class="stall-market-meta"><span data-market-date></span><span class="meta-divider" aria-hidden="true"></span><span data-market-hours></span></p>
+        </header>
+
+        <div class="stall-layout">
+          <section class="stall-map-section" aria-labelledby="stall-map-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">The market map</p>
+                <h2 id="stall-map-title">Pick your place.</h2>
+              </div>
+              <span class="stall-count-label">10 stalls</span>
+            </div>
+            <div class="stall-map" data-stall-map aria-label="Market stall map"></div>
+            <ul class="stall-legend" aria-label="Stall map legend">
+              <li><span class="legend-swatch legend-free" aria-hidden="true"></span>Free</li>
+              <li><span class="legend-swatch legend-taken" aria-hidden="true"></span>Taken</li>
+              <li><span class="legend-swatch legend-selected" aria-hidden="true"></span>Your choice</li>
+            </ul>
+            <p class="map-assurance"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 16 5v4.2c0 3.3-2.3 5.3-6 6.3-3.7-1-6-3-6-6.3V5l6-2.5Z"/><path d="m7.5 9 1.7 1.7 3.5-3.5"/></svg> Choose your stall now. It’s yours once you reserve.</p>
+          </section>
+
+          <aside class="stall-details-card" aria-labelledby="details-title">
+            <div class="details-card-heading">
+              <span class="details-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><path d="M5 14h22l-2-8H7l-2 8Zm0 0c0 3 4 4 6 1 2 3 6 2 6-1 0 3 4 4 6 1 2 3 6 2 6-1M8 16v11m16-11v11M5 27h22"/></svg>
+              </span>
+              <div>
+                <p class="eyebrow">Good to know</p>
+                <h2 id="details-title">All the details.</h2>
+              </div>
+            </div>
+
+            <div class="selected-stall-panel" aria-live="polite" aria-atomic="true">
+              <span class="selected-stall-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM2 7l2-4h16l2 4M2 7c0 2 4 3 5 0 1 3 5 2 5 0 0 2 4 3 5 0 1 3 5 2 5 0"/></svg></span>
+              <div>
+                <small>Selected stall</small>
+                <strong data-selected-stall>No stall selected</strong>
+                <small class="selected-stall-size" data-stall-size>2 x 1.5 m</small>
+              </div>
+              <span class="selection-status" data-selection-status>Select a stall</span>
+            </div>
+
+            <div class="detail-row detail-price-row">
+              <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 4h12v12H4z"/><path d="M7 2v4m6-4v4M4 8h12"/></svg></span>
+              <div class="detail-copy">
+                <h3>Stall fee</h3>
+                <p class="detail-fee"><strong data-market-fee>€15</strong><span> / stall · 2 x 1.5 m</span></p>
+                <p>Pay at the entrance on arrival (cash or card).</p>
+              </div>
+            </div>
+            <div class="detail-row">
+              <span class="detail-icon detail-icon-clay" aria-hidden="true"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg></span>
+              <div class="detail-copy">
+                <h3>Set-up time</h3>
+                <p>Arrive between <strong data-market-setup>7:00 to 8:00</strong> to get settled.</p>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h3><span class="section-check" aria-hidden="true">✓</span> The rules</h3>
+              <ul class="detail-list">
+                <li>Second-hand items only: clothes, books and household items.</li>
+                <li>Bring your own table or clothes rack.</li>
+                <li>Free cancellation up to 48 hours before.</li>
+              </ul>
+            </div>
+            <div class="detail-section detail-section-compact">
+              <h3><span class="section-check" aria-hidden="true">+</span> What to bring</h3>
+              <p>A table or clothes rack, small change, bags and a mirror for clothes.</p>
+            </div>
+            <div class="detail-section detail-section-compact">
+              <h3><span class="section-cross" aria-hidden="true">×</span> Not allowed</h3>
+              <p>New or mass-produced goods, food and drinks, counterfeit items or animals.</p>
+            </div>
+
+            <div class="reserve-area">
+              <button class="button button-primary reserve-button" type="button" data-reserve disabled>Select a stall to continue</button>
+              <p class="reserve-helper">You'll get your confirmation and stall number right away.</p>
+              <p class="reserve-error" data-reserve-error role="status" aria-live="polite"></p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner page-width">
+        <a class="wordmark footer-wordmark" href="index.html">
+          <svg class="wordmark-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M5 16h26v15H5zM3 15l3-9h24l3 9H3z" fill="var(--sage-light)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 15h30M10 6l-2 9m10-9v9m8-9 2 9" fill="none" stroke="var(--clay)" stroke-width="2"/>
+          </svg>
+          <span>FleaSpace</span>
+        </a>
+        <p class="footer-disclaimer">Prototype for a university project. Markets, dates, fees and availability are sample data.</p>
+        <a class="reset-link" href="#reset-demo-data" data-reset-demo>Reset demo data</a>
+        <p class="footer-credit">Made for a more certain market morning <span aria-hidden="true">✳</span></p>
+        <p class="sr-only" data-app-status role="status" aria-live="polite"></p>
+      </div>
+    </footer>
+
+    <dialog class="contact-dialog" aria-labelledby="contact-title" data-contact-dialog>
+      <div class="dialog-inner">
+        <button class="dialog-close" type="button" aria-label="Close contact dialog" data-contact-close>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+        <span class="dialog-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M5 8h22v16H5z"/><path d="m6 9 10 8 10-8"/></svg>
+        </span>
+        <p class="eyebrow">We'd love to hear from you</p>
+        <h2 id="contact-title">Say hello.</h2>
+        <p class="dialog-intro">Questions about a market or your stall? Get in touch with the organizer.</p>
+        <a class="contact-option" href="mailto:organizers@fleaspace.example">
+          <span class="contact-option-icon" aria-hidden="true">✉</span>
+          <span><small>Email</small><strong>organizers@fleaspace.example</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="contact-option" href="https://www.instagram.com/fleaspace.berlin/" target="_blank" rel="noreferrer">
+          <span class="contact-option-icon contact-social" aria-hidden="true">◎</span>
+          <span><small>Instagram</small><strong>@fleaspace.berlin</strong></span>
+          <span class="contact-arrow" aria-hidden="true">↗</span>
+        </a>
+        <p class="sample-note">These are sample contact details for this prototype.</p>
+      </div>
+    </dialog>
+  </body>
+</html>
