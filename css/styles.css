@@ -361,11 +361,6 @@ h2 {
   transform: rotate(-3deg);
 }
 
-.caption-star {
-  color: var(--clay);
-  font-size: 18px;
-}
-
 .section-space {
   padding-block: 90px;
 }
@@ -583,15 +578,6 @@ h2 {
   flex: 0 0 auto;
 }
 
-.cta-sparkle {
-  position: absolute;
-  right: 26%;
-  bottom: -29px;
-  width: 90px;
-  height: 90px;
-  opacity: 0.7;
-}
-
 .site-footer {
   border-top: 1px solid var(--stone);
   background: var(--paper);
@@ -644,10 +630,6 @@ h2 {
   color: var(--ink-soft);
   font-size: 11px;
   text-align: center;
-}
-
-.footer-credit span {
-  color: var(--clay);
 }
 
 .contact-dialog {
@@ -2301,13 +2283,6 @@ h2 {
   pointer-events: none;
 }
 
-.map-decoration-one {
-  top: 15px;
-  right: 21px;
-  color: var(--clay);
-  font-size: 23px;
-}
-
 .map-decoration-two {
   right: -23px;
   bottom: 45px;
@@ -2580,13 +2555,6 @@ h2 {
 
   .closing-copy > p:last-child {
     font-size: 14px;
-  }
-
-  .cta-sparkle {
-    right: -13px;
-    bottom: 40px;
-    width: 64px;
-    height: 64px;
   }
 
   .footer-inner {
