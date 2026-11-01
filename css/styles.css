@@ -2333,8 +2333,9 @@ h2 {
   position: relative;
   width: 100%;
   max-width: 450px;
-  aspect-ratio: 1 / 0.93;
+  aspect-ratio: 1 / 0.9;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .district-map {
@@ -2368,6 +2369,11 @@ h2 {
   fill: var(--sage-light);
 }
 
+.district-nine,
+.district-ten {
+  fill: var(--paper);
+}
+
 .map-river,
 .map-river-echo,
 .map-road {
@@ -2396,24 +2402,22 @@ h2 {
 .map-pin {
   position: absolute;
   z-index: 1;
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  gap: 7px;
+  width: 0;
+  height: 0;
   color: var(--ink);
   text-decoration: none;
-  transition: transform 160ms ease;
 }
 
 .map-pin:hover,
 .map-pin:focus-visible,
 .map-pin.is-highlighted {
   z-index: 2;
-  transform: translateY(-3px);
 }
 
 .pin-dot {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   width: 29px;
   height: 29px;
@@ -2423,7 +2427,7 @@ h2 {
   border-radius: 50% 50% 50% 8px;
   background: var(--clay);
   box-shadow: 0 4px 10px rgba(43, 47, 38, 0.14);
-  transform: rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
   transition: background-color 160ms ease, scale 160ms ease;
 }
 
@@ -2443,6 +2447,10 @@ h2 {
 }
 
 .pin-label {
+  position: absolute;
+  width: max-content;
+  max-width: 125px;
+  box-sizing: border-box;
   display: block;
   padding: 5px 8px;
   border: 1px solid rgba(204, 204, 204, 0.9);
@@ -2451,6 +2459,35 @@ h2 {
   box-shadow: 0 4px 12px rgba(43, 47, 38, 0.07);
   line-height: 1.2;
   transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.map-pin[data-label-side="right"] .pin-label {
+  top: 50%;
+  left: 22px;
+  transform: translateY(calc(-50% + var(--map-label-offset-y, 0px)));
+}
+
+.map-pin[data-label-side="left"] .pin-label {
+  top: 50%;
+  right: 22px;
+  transform: translateY(calc(-50% + var(--map-label-offset-y, 0px)));
+}
+
+.map-pin[data-label-side="above"] .pin-label {
+  bottom: 22px;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.map-pin[data-label-side="below"] .pin-label {
+  top: 22px;
+  left: 0;
+  transform: translateX(-50%);
+}
+
+.map-pin:focus-visible .pin-label {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .map-pin:hover .pin-label,
@@ -2463,7 +2500,7 @@ h2 {
 .pin-label strong,
 .pin-label small {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .pin-label strong {
@@ -2890,7 +2927,7 @@ h2 {
 
   .berlin-map {
     width: 100%;
-    aspect-ratio: 1 / 0.95;
+    aspect-ratio: 1 / 0.9;
   }
 
   .pin-dot {
@@ -2907,7 +2944,7 @@ h2 {
   }
 
   .pin-label small {
-    font-size: 7px;
+    display: none;
   }
 
   .market-list-heading {

@@ -664,6 +664,12 @@
         pin.setAttribute("aria-label", `${market.name}, view stalls`);
         pin.style.top = `${market.mapPosition.top}%`;
         pin.style.left = `${market.mapPosition.left}%`;
+        pin.dataset.labelSide = ["left", "right", "above", "below"].includes(market.mapLabelSide)
+          ? market.mapLabelSide
+          : "right";
+        if (Number.isFinite(market.mapLabelOffsetY)) {
+          pin.style.setProperty("--map-label-offset-y", `${market.mapLabelOffsetY}px`);
+        }
 
         const dot = document.createElement("span");
         dot.className = "pin-dot";
