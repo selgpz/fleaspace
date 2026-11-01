@@ -1,10 +1,10 @@
 # FleaSpace
 
-FleaSpace is a small static website prototype for booking a stall at a Berlin flea market. It helps sellers compare markets, understand fees and rules in advance, choose an exact stall, and keep an immediate reservation confirmation.
+FleaSpace is a small static website prototype for booking up to three stalls at a Berlin flea market. Sellers can compare upcoming dates, fees and rules, choose specific stalls for a market date, and get an immediate reservation confirmation with the total cost.
 
 ## Design goal
 
-Make it clear where sellers need to go, what their stall costs, and whether their spot is secured, so they can prepare for market day without guesswork.
+Make it clear where sellers need to go, what their stalls cost, and whether their spots are secured, so they can prepare for market day without guesswork.
 
 ## Project structure
 
@@ -18,7 +18,7 @@ fleaspace/
 │   └── styles.css      Shared design system and responsive styles
 ├── js/
 │   ├── app.js          Shared interactions and reservation flow
-│   └── data.js         Sample markets and reservation storage key
+│   └── data.js         Sample markets, dates, availability and reservation storage key
 └── ref/                Lo-fi layout references
 ```
 
