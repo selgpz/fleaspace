@@ -2412,21 +2412,6 @@ h2 {
   transform: translateY(-3px);
 }
 
-.map-pin-mauerpark {
-  top: 19%;
-  left: 29%;
-}
-
-.map-pin-boxhagener {
-  top: 47%;
-  left: 52%;
-}
-
-.map-pin-raw {
-  top: 68%;
-  left: 23%;
-}
-
 .pin-dot {
   position: relative;
   display: grid;
@@ -2906,21 +2891,6 @@ h2 {
   .berlin-map {
     width: 100%;
     aspect-ratio: 1 / 0.95;
-  }
-
-  .map-pin-mauerpark {
-    top: 19%;
-    left: 27%;
-  }
-
-  .map-pin-boxhagener {
-    top: 48%;
-    left: 49%;
-  }
-
-  .map-pin-raw {
-    top: 68%;
-    left: 18%;
   }
 
   .pin-dot {

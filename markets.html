@@ -38,14 +38,14 @@
       <section class="markets-page page-width" aria-labelledby="markets-title">
         <a class="back-link" href="index.html">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 10H4m5 5-5-5 5-5"/></svg>
-          Back home
+          Back to home
         </a>
         <div class="markets-heading">
           <div>
             <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Find your kind of Sunday</p>
             <h1 id="markets-title">Flea markets <span class="heading-break">in Berlin</span></h1>
           </div>
-          <p class="markets-intro">Three lovely spots to browse, sell, and meet your next favourite thing. Pick the one that feels right.</p>
+          <p class="markets-intro">Find a market to browse, sell, and meet your next favourite thing. Pick the one that feels right.</p>
         </div>
 
         <div class="markets-layout">
@@ -62,7 +62,7 @@
             <div class="berlin-map">
               <svg class="district-map" viewBox="0 0 500 450" role="img" aria-labelledby="map-title map-description">
                 <title id="map-title">Stylised map of Berlin flea market locations</title>
-                <desc id="map-description">Abstract neighbourhood shapes with locations for Mauerpark, Boxhagener Platz, and RAW Gelände flea markets.</desc>
+                <desc id="map-description">Abstract neighbourhood shapes with pins for Berlin flea markets.</desc>
                 <path class="district district-one" d="m70 47 74-17 52 29 47-8 41 31-13 43-57 14-22 36-58-14-20-42-55-7-30-34Z"/>
                 <path class="district district-two" d="m271 82 57-21 72 20 41 40-16 51-44 21-49-19-52 9-35-35 17-23Z"/>
                 <path class="district district-three" d="m58 151 61-19 36 31 58-3 24 47-38 43-69-7-45 19-47-36Z"/>
@@ -77,18 +77,7 @@
                 <path class="map-road" d="M421 68c-49 37-84 71-111 106s-48 72-83 102-64 39-105 59"/>
               </svg>
 
-              <a class="map-pin map-pin-mauerpark" href="stalls.html?market=mauerpark" data-market-highlight="mauerpark" aria-label="Mauerpark Flea, view stalls">
-                <span class="pin-dot" aria-hidden="true"><span></span></span>
-                <span class="pin-label"><strong>Mauerpark</strong><small>Sunday market</small></span>
-              </a>
-              <a class="map-pin map-pin-boxhagener" href="stalls.html?market=boxhagener-platz" data-market-highlight="boxhagener-platz" aria-label="Boxhagener Platz Flea, view stalls">
-                <span class="pin-dot" aria-hidden="true"><span></span></span>
-                <span class="pin-label"><strong>Boxhagener<br>Platz</strong><small>Sunday market</small></span>
-              </a>
-              <a class="map-pin map-pin-raw" href="stalls.html?market=raw-gelaende" data-market-highlight="raw-gelaende" aria-label="RAW Gelaende Flea, view stalls">
-                <span class="pin-dot" aria-hidden="true"><span></span></span>
-                <span class="pin-label"><strong>RAW Gelände</strong><small>Saturday market</small></span>
-              </a>
+              <div data-market-pins></div>
             </div>
             <p class="map-caption"><span class="map-caption-dot" aria-hidden="true"></span> Stylised map, not to scale.</p>
             <span class="map-decoration map-decoration-two" aria-hidden="true"></span>

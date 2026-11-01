@@ -3,6 +3,7 @@
   const cancelDialog = document.querySelector("[data-cancel-dialog]");
   const status = document.querySelector("[data-app-status]");
   const marketCards = document.querySelector("[data-market-cards]");
+  const marketPins = document.querySelector("[data-market-pins]");
   const bookingsList = document.querySelector("[data-bookings-list]");
   const bookingsEmpty = document.querySelector("[data-bookings-empty]");
   const stallMap = document.querySelector("[data-stall-map]");
@@ -597,17 +598,19 @@
   }
 
   function renderMarketCards() {
-    if (!marketCards || !Array.isArray(window.FLEASPACE_MARKETS)) {
+    if ((!marketCards && !marketPins) || !Array.isArray(window.FLEASPACE_MARKETS)) {
       return;
     }
 
     const reservations = getReservations();
     const marketCount = document.querySelector("[data-market-count]");
     if (marketCount) {
-      marketCount.textContent = `${window.FLEASPACE_MARKETS.length} markets`;
+      const count = window.FLEASPACE_MARKETS.length;
+      marketCount.textContent = `${count} ${count === 1 ? "market" : "markets"}`;
     }
 
-    marketCards.innerHTML = window.FLEASPACE_MARKETS.map((market) => {
+    if (marketCards) {
+      marketCards.innerHTML = window.FLEASPACE_MARKETS.map((market) => {
       const nextDate = market.dates[0];
       const takenStalls = new Set(nextDate.takenStalls);
       reservations.filter((reservation) => getReservedMarketId(reservation) === market.id
@@ -648,7 +651,34 @@
             </a>
           </div>
         </article>`;
-    }).join("");
+      }).join("");
+    }
+
+    if (marketPins) {
+      marketPins.replaceChildren(...window.FLEASPACE_MARKETS.map((market) => {
+        const nextDate = market.dates[0];
+        const pin = document.createElement("a");
+        pin.className = "map-pin";
+        pin.dataset.marketHighlight = market.id;
+        pin.href = `stalls.html?market=${encodeURIComponent(market.id)}&date=${encodeURIComponent(nextDate.date)}`;
+        pin.setAttribute("aria-label", `${market.name}, view stalls`);
+        pin.style.top = `${market.mapPosition.top}%`;
+        pin.style.left = `${market.mapPosition.left}%`;
+
+        const dot = document.createElement("span");
+        dot.className = "pin-dot";
+        dot.setAttribute("aria-hidden", "true");
+        dot.append(document.createElement("span"));
+
+        const label = document.createElement("span");
+        label.className = "pin-label";
+        label.innerHTML = `<strong></strong><small></small>`;
+        label.querySelector("strong").textContent = market.mapLabel;
+        label.querySelector("small").textContent = market.marketDay;
+        pin.append(dot, label);
+        return pin;
+      }));
+    }
   }
 
   function setMarketHighlight(marketId, isActive) {

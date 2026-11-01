@@ -2,6 +2,8 @@
 
 FleaSpace is a small static website prototype for booking up to three stalls at a Berlin flea market. Sellers can compare upcoming dates, fees and rules, choose specific stalls for a market date, and get an immediate reservation confirmation with the total cost.
 
+The market directory and map pins are generated from sample data for five Berlin markets.
+
 ## Design goal
 
 Make it clear where sellers need to go, what their stalls cost, and whether their spots are secured, so they can prepare for market day without guesswork.

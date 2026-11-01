@@ -69,7 +69,7 @@ Shared footer: "Prototype for a university project. Markets, dates, fees and ava
 - If there is no saved reservation, show a friendly empty state with a button to find a market.
 
 ## 5. Data and behaviour
-- js/data.js holds an array of 3 sample markets: Mauerpark Flea (Sun 15 Nov 2026, 8:00 to 16:00, set-up 7:00 to 8:00, EUR 15, taken stalls 1, 4, 8, 10 so 6 are free), Boxhagener Platz Flea (Sun 22 Nov 2026, 8:00 to 16:00, set-up 7:00 to 8:00, EUR 12, taken stalls 3, 6, 9), RAW Gelaende Flea (Sat 28 Nov 2026, 9:00 to 17:00, set-up 8:00 to 9:00, EUR 18, taken stalls 1 to 8). Each market has 10 stalls, each 2 x 1.5 m. Free-stall counts shown on the cards must be calculated from the data, never hard-coded.
+- js/data.js holds an array of 5 sample markets: Mauerpark Flea, Boxhagener Platz Flea, RAW Gelände, Nowkoelln Flowmarkt, and Pankow Flea Market. Each has several upcoming dates, 10 stalls, date-specific taken-stall data, a fee, opening hours, set-up time, and map location. Free-stall counts shown on the cards must be calculated from the data, never hard-coded.
 - When the user reserves, save the reservation (market, stall, confirmation number) in localStorage inside try/catch, mark that stall as taken from then on, and go to confirmation.html. "Reset demo data" clears it so the flow can be tested repeatedly.
 
 ## 6. Accessibility, responsiveness and performance
