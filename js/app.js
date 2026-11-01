@@ -1,7 +1,10 @@
 (() => {
   const contactDialog = document.querySelector("[data-contact-dialog]");
+  const cancelDialog = document.querySelector("[data-cancel-dialog]");
   const status = document.querySelector("[data-app-status]");
   const marketCards = document.querySelector("[data-market-cards]");
+  const bookingsList = document.querySelector("[data-bookings-list]");
+  const bookingsEmpty = document.querySelector("[data-bookings-empty]");
   const stallMap = document.querySelector("[data-stall-map]");
   const reserveButton = document.querySelector("[data-reserve]");
   const reserveError = document.querySelector("[data-reserve-error]");
@@ -11,17 +14,48 @@
   let activeDate = null;
   let selectedStalls = new Set();
   let takenStalls = new Set();
+  let pendingCancellation = null;
 
-  function getReservation() {
+  function getReservations() {
     try {
-      const savedReservation = window.localStorage.getItem(window.FLEASPACE_RESERVATION_KEY);
-      return savedReservation ? JSON.parse(savedReservation) : null;
-    } catch (error) {
-      console.error("Unable to read FleaSpace demo reservation data.", error);
-      if (status) {
-        status.textContent = "Saved reservation data could not be read.";
+      const saved = window.localStorage.getItem(window.FLEASPACE_RESERVATION_KEY);
+      if (!saved) {
+        return [];
       }
-      return null;
+
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((reservation) => reservation && typeof reservation === "object");
+      }
+      if (parsed && typeof parsed === "object") {
+        const migrated = [parsed];
+        if (!saveReservations(migrated)) {
+          if (status) {
+            status.textContent = "Your existing booking was read but could not be migrated to the new booking list.";
+          }
+        }
+        return migrated;
+      }
+      throw new TypeError("Saved booking data must be an object or an array.");
+    } catch (error) {
+      console.error("Unable to read FleaSpace booking data.", error);
+      if (status) {
+        status.textContent = "Saved booking data could not be read.";
+      }
+      return [];
+    }
+  }
+
+  function saveReservations(reservations) {
+    try {
+      window.localStorage.setItem(window.FLEASPACE_RESERVATION_KEY, JSON.stringify(reservations));
+      return true;
+    } catch (error) {
+      console.error("Unable to save FleaSpace booking data.", error);
+      if (status) {
+        status.textContent = "Booking changes could not be saved in this browser.";
+      }
+      return false;
     }
   }
 
@@ -41,16 +75,120 @@
     return Number.isInteger(legacyStall) ? [legacyStall] : [];
   }
 
+  function getCurrentReservation(reservations = getReservations()) {
+    const confirmationNumber = new URLSearchParams(window.location.search).get("confirmation");
+    if (confirmationNumber) {
+      return reservations.find((reservation) => reservation.confirmationNumber === confirmationNumber) || null;
+    }
+    return reservations[reservations.length - 1] || null;
+  }
+
   function getDateForMarket(market, date) {
     return market.dates.find((item) => item.date === date) || market.dates[0];
   }
 
   function formatTotal(market, count) {
+    return formatAmount(market, market.fee * count);
+  }
+
+  function formatAmount(market, amount) {
     return new Intl.NumberFormat("en-IE", {
       style: "currency",
       currency: market.currency,
       maximumFractionDigits: 0,
-    }).format(market.fee * count);
+    }).format(amount);
+  }
+
+  function getMarketEventTimes(market, date) {
+    const [openingTime, closingTime] = market.hours.split(" to ");
+    const toUtc = (time) => {
+      const [hour, minute] = time.split(":").map(Number);
+      const [year, month, day] = date.split("-").map(Number);
+      const localAsUtc = Date.UTC(year, month - 1, day, hour, minute);
+      let utc = localAsUtc;
+      const formatter = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/Berlin",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      });
+
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const parts = Object.fromEntries(formatter.formatToParts(new Date(utc))
+          .filter((part) => part.type !== "literal")
+          .map((part) => [part.type, Number(part.value)]));
+        const formattedAsUtc = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+        utc = localAsUtc - (formattedAsUtc - utc);
+      }
+
+      return new Date(utc);
+    };
+
+    return [toUtc(openingTime), toUtc(closingTime)];
+  }
+
+  function formatCalendarDate(date) {
+    return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  }
+
+  function escapeCalendarText(value) {
+    return String(value).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  }
+
+  function getCalendarDescription(reservation) {
+    return `Stalls: ${getReservationStalls(reservation).join(", ")}\nConfirmation: ${reservation.confirmationNumber}`;
+  }
+
+  function buildGoogleCalendarUrl(market, date, reservation) {
+    const [start, end] = getMarketEventTimes(market, date);
+    const parameters = new URLSearchParams({
+      action: "TEMPLATE",
+      text: `${market.name} — FleaSpace`,
+      dates: `${formatCalendarDate(start)}/${formatCalendarDate(end)}`,
+      details: getCalendarDescription(reservation),
+      location: market.name,
+    });
+    return `https://calendar.google.com/calendar/render?${parameters.toString()}`;
+  }
+
+  function downloadCalendarEvent() {
+    const reservations = getReservations();
+    const reservation = getCurrentReservation(reservations);
+    const market = window.FLEASPACE_MARKETS?.find((item) => item.id === getReservedMarketId(reservation));
+    const date = market && getDateForMarket(market, reservation?.date || market.dates[0].date);
+    if (!reservation || !market || !date) {
+      return;
+    }
+
+    const [start, end] = getMarketEventTimes(market, date.date);
+    const description = escapeCalendarText(getCalendarDescription(reservation));
+    const event = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//FleaSpace//Market Booking//EN",
+      "CALSCALE:GREGORIAN",
+      "BEGIN:VEVENT",
+      `UID:${escapeCalendarText(reservation.confirmationNumber)}@fleaspace`,
+      `DTSTAMP:${formatCalendarDate(new Date())}`,
+      `DTSTART:${formatCalendarDate(start)}`,
+      `DTEND:${formatCalendarDate(end)}`,
+      `SUMMARY:${escapeCalendarText(`${market.name} — FleaSpace`)}`,
+      `LOCATION:${escapeCalendarText(market.name)}`,
+      `DESCRIPTION:${description}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const file = new Blob([event], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${reservation.confirmationNumber}.ics`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function updateDateInUrl(date) {
@@ -183,16 +321,17 @@
       url.searchParams.set("date", activeDate.date);
       window.history.replaceState({}, "", url);
     }
-    const reservation = getReservation();
     takenStalls = new Set(activeDate.takenStalls);
-    if (getReservedMarketId(reservation) === activeMarket.id
-      && (reservation.date || activeMarket.dates[0].date) === activeDate.date) {
-      getReservationStalls(reservation).forEach((number) => {
-        if (Number.isInteger(number) && number >= 1 && number <= activeMarket.stallCount) {
-          takenStalls.add(number);
-        }
+    getReservations()
+      .filter((reservation) => getReservedMarketId(reservation) === activeMarket.id
+        && (reservation.date || activeMarket.dates[0].date) === activeDate.date)
+      .forEach((reservation) => {
+        getReservationStalls(reservation).forEach((number) => {
+          if (Number.isInteger(number) && number >= 1 && number <= activeMarket.stallCount) {
+            takenStalls.add(number);
+          }
+        });
       });
-    }
 
     const name = document.querySelector("[data-market-name]");
     const date = document.querySelector("[data-market-date]");
@@ -248,14 +387,12 @@
       confirmationNumber: createConfirmationNumber(),
     };
 
-    try {
-      window.localStorage.setItem(window.FLEASPACE_RESERVATION_KEY, JSON.stringify(reservation));
-      window.location.assign("confirmation.html");
-    } catch (error) {
-      console.error("Unable to save FleaSpace reservation.", error);
-      if (reserveError) {
-        reserveError.textContent = "Your reservation couldn't be saved. Check your browser storage settings and try again.";
-      }
+    const reservations = getReservations();
+    reservations.push(reservation);
+    if (saveReservations(reservations)) {
+      window.location.assign(`confirmation.html?confirmation=${encodeURIComponent(reservation.confirmationNumber)}`);
+    } else if (reserveError) {
+      reserveError.textContent = "Your reservation couldn't be saved. Check your browser storage settings and try again.";
     }
   }
 
@@ -265,7 +402,8 @@
       return;
     }
 
-    const reservation = getReservation();
+    const reservations = getReservations();
+    const reservation = getCurrentReservation(reservations);
     const marketId = getReservedMarketId(reservation);
     const market = window.FLEASPACE_MARKETS?.find((item) => item.id === marketId);
     const emptyState = document.querySelector("[data-confirmation-empty]");
@@ -324,6 +462,10 @@
         <div class="mini-stall-column">${stalls.slice(5).join("")}</div>`;
       map.setAttribute("aria-label", `Mini map of ${market.name}; Stalls ${reservationStalls.join(", ")} are your reserved stalls.`);
     }
+    const googleCalendarLink = document.querySelector("[data-google-calendar]");
+    if (googleCalendarLink) {
+      googleCalendarLink.href = buildGoogleCalendarUrl(market, date.date, reservation);
+    }
     card.hidden = false;
     if (content) {
       content.hidden = false;
@@ -353,13 +495,113 @@
     return null;
   }
 
+  function getBookingDetails(reservation) {
+    const market = window.FLEASPACE_MARKETS?.find((item) => item.id === getReservedMarketId(reservation));
+    const date = market && getDateForMarket(market, reservation.date || market.dates[0].date);
+    const stalls = getReservationStalls(reservation);
+    if (!market || !date || stalls.length === 0) {
+      return null;
+    }
+    return { market, date, stalls, total: Number(reservation.total) || market.fee * stalls.length };
+  }
+
+  function renderBookings() {
+    if (!bookingsList || !bookingsEmpty) {
+      return;
+    }
+    const reservations = getReservations();
+    bookingsList.innerHTML = reservations.map((reservation) => {
+      const details = getBookingDetails(reservation);
+      if (!details) {
+        return "";
+      }
+      const { market, date, stalls, total } = details;
+      return `
+        <article class="booking-card">
+          <div class="booking-card-heading">
+            <div>
+              <p class="eyebrow">Market day</p>
+              <h2>${market.name}</h2>
+            </div>
+            <span class="booking-confirmation-number">${reservation.confirmationNumber}</span>
+          </div>
+          <dl class="booking-details">
+            <div><dt>Date</dt><dd>${date.displayDate}</dd></div>
+            <div><dt>Stalls</dt><dd>${stalls.map((number) => `Stall ${number}`).join(", ")}</dd></div>
+            <div><dt>Total cost</dt><dd>${formatAmount(market, total)}</dd></div>
+            <div><dt>Confirmation no.</dt><dd>${reservation.confirmationNumber}</dd></div>
+          </dl>
+          <div class="booking-actions">
+            <a class="button button-primary button-small" href="confirmation.html?confirmation=${encodeURIComponent(reservation.confirmationNumber)}">View confirmation</a>
+            <button class="button button-secondary button-small" type="button" data-cancel-booking="${reservation.confirmationNumber}">Cancel booking</button>
+          </div>
+        </article>`;
+    }).join("");
+    const hasBookings = bookingsList.childElementCount > 0;
+    bookingsEmpty.hidden = hasBookings;
+    bookingsList.hidden = !hasBookings;
+  }
+
+  function openCancellationDialog(confirmationNumber) {
+    if (!(cancelDialog instanceof HTMLDialogElement)) {
+      return;
+    }
+    const reservation = getReservations().find((item) => item.confirmationNumber === confirmationNumber);
+    const details = reservation && getBookingDetails(reservation);
+    if (!reservation || !details) {
+      if (status) {
+        status.textContent = "That booking could not be found.";
+      }
+      return;
+    }
+
+    pendingCancellation = reservation.confirmationNumber;
+    const summary = document.querySelector("[data-cancel-summary]");
+    const warning = document.querySelector("[data-cancel-warning]");
+    const { market, date } = details;
+    if (summary) {
+      summary.textContent = `${market.name} · ${date.displayDate}`;
+    }
+    if (warning) {
+      const [start] = getMarketEventTimes(market, date.date);
+      const hoursUntilMarket = (start.getTime() - Date.now()) / (60 * 60 * 1000);
+      warning.hidden = hoursUntilMarket >= 48;
+      warning.textContent = "This market is less than 48 hours away or has already started. Cancellation is still available, but the free-cancellation period may have passed.";
+    }
+    cancelDialog.showModal();
+  }
+
+  function cancelBooking() {
+    if (!pendingCancellation) {
+      return;
+    }
+    const reservations = getReservations();
+    const updatedReservations = reservations.filter((item) => item.confirmationNumber !== pendingCancellation);
+    if (updatedReservations.length === reservations.length) {
+      if (status) {
+        status.textContent = "That booking could not be found.";
+      }
+      return;
+    }
+    if (!saveReservations(updatedReservations)) {
+      return;
+    }
+
+    pendingCancellation = null;
+    cancelDialog.close();
+    renderBookings();
+    renderMarketCards();
+    if (status) {
+      status.textContent = "Booking canceled. Your stalls are available again.";
+    }
+  }
+
   function renderMarketCards() {
     if (!marketCards || !Array.isArray(window.FLEASPACE_MARKETS)) {
       return;
     }
 
-    const reservation = getReservation();
-    const reservationMarketId = getReservedMarketId(reservation);
+    const reservations = getReservations();
     const marketCount = document.querySelector("[data-market-count]");
     if (marketCount) {
       marketCount.textContent = `${window.FLEASPACE_MARKETS.length} markets`;
@@ -368,14 +610,10 @@
     marketCards.innerHTML = window.FLEASPACE_MARKETS.map((market) => {
       const nextDate = market.dates[0];
       const takenStalls = new Set(nextDate.takenStalls);
-      if (reservationMarketId === market.id
-        && (reservation.date || market.dates[0].date) === nextDate.date) {
-        getReservationStalls(reservation).forEach((number) => {
-          if (Number.isInteger(number)) {
-            takenStalls.add(number);
-          }
-        });
-      }
+      reservations.filter((reservation) => getReservedMarketId(reservation) === market.id
+        && (reservation.date || market.dates[0].date) === nextDate.date)
+        .flatMap(getReservationStalls)
+        .forEach((number) => takenStalls.add(number));
 
       const freeStalls = Math.max(0, market.stallCount - takenStalls.size);
       const isAlmostFull = freeStalls <= 2;
@@ -474,6 +712,28 @@
     });
   });
 
+  document.addEventListener("click", (event) => {
+    if (event.target instanceof Element) {
+      const button = event.target.closest("[data-cancel-booking]");
+      if (button) {
+        openCancellationDialog(button.dataset.cancelBooking);
+      }
+    }
+  });
+
+  document.querySelectorAll("[data-cancel-confirm]").forEach((button) => {
+    button.addEventListener("click", cancelBooking);
+  });
+
+  document.querySelectorAll("[data-cancel-close]").forEach((button) => {
+    button.addEventListener("click", () => {
+      pendingCancellation = null;
+      if (cancelDialog instanceof HTMLDialogElement && cancelDialog.open) {
+        cancelDialog.close();
+      }
+    });
+  });
+
   if (contactDialog instanceof HTMLDialogElement) {
     contactDialog.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && contactDialog.open) {
@@ -483,17 +743,25 @@
     });
   }
 
+  if (cancelDialog instanceof HTMLDialogElement) {
+    cancelDialog.addEventListener("close", () => {
+      pendingCancellation = null;
+    });
+  }
+
   document.querySelectorAll("[data-reset-demo]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       try {
-        window.localStorage.removeItem(window.FLEASPACE_RESERVATION_KEY);
+        if (!saveReservations([])) {
+          return;
+        }
+        renderBookings();
         renderMarketCards();
         renderStallPage();
         renderConfirmation();
-        window.addEventListener("popstate", renderStallPage);
         if (status) {
-          status.textContent = "Demo reservation data has been reset.";
+          status.textContent = "All demo bookings have been reset.";
         }
       } catch (error) {
         console.error("Unable to reset FleaSpace demo data.", error);
@@ -507,10 +775,15 @@
   renderMarketCards();
   renderStallPage();
   renderConfirmation();
+  renderBookings();
+  window.addEventListener("popstate", renderStallPage);
   if (reserveButton) {
     reserveButton.addEventListener("click", reserveSelectedStall);
   }
   document.querySelectorAll("[data-print]").forEach((button) => {
     button.addEventListener("click", () => window.print());
+  });
+  document.querySelectorAll("[data-add-calendar]").forEach((button) => {
+    button.addEventListener("click", downloadCalendarEvent);
   });
 })();

@@ -1986,7 +1986,7 @@ h2 {
   margin-top: 22px;
   align-items: center;
   gap: 8px 12px;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: repeat(3, auto);
 }
 
 .confirmation-actions .button {
@@ -2009,6 +2009,194 @@ h2 {
   color: var(--ink-soft);
   font-size: 10px;
   text-align: right;
+}
+
+.bookings-main {
+  min-height: 700px;
+  padding-block: 42px 72px;
+  background:
+    radial-gradient(ellipse at 12% 10%, rgba(224, 231, 215, 0.4), transparent 28rem),
+    var(--paper);
+}
+
+.bookings-page {
+  width: min(900px, calc(100% - var(--page-gutter) * 2));
+  margin-inline: auto;
+}
+
+.bookings-page > .back-link {
+  margin-bottom: 20px;
+}
+
+.bookings-heading {
+  margin-bottom: 28px;
+}
+
+.bookings-heading .eyebrow {
+  margin-bottom: 7px;
+}
+
+.bookings-heading h1 {
+  margin: 0 0 9px;
+  font-size: clamp(42px, 5vw, 58px);
+  line-height: 1.12;
+}
+
+.bookings-heading h1 em {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.bookings-heading > p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.booking-list {
+  display: grid;
+  gap: 15px;
+}
+
+.booking-list[hidden] {
+  display: none;
+}
+
+.booking-card {
+  padding: 23px 25px;
+  border: 1px solid var(--stone);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  box-shadow: 0 4px 17px rgba(43, 47, 38, 0.035);
+}
+
+.booking-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.booking-card-heading .eyebrow {
+  margin-bottom: 3px;
+  font-size: 9px;
+}
+
+.booking-card-heading h2 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.booking-confirmation-number {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--sage-light);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.booking-details {
+  display: grid;
+  margin: 18px 0 0;
+  border-top: 1px solid var(--stone);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.booking-details > div {
+  min-width: 0;
+  padding: 11px 8px 9px 0;
+  border-bottom: 1px solid var(--stone);
+}
+
+.booking-details dt {
+  margin-bottom: 2px;
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.booking-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.booking-actions {
+  display: flex;
+  margin-top: 17px;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.bookings-empty {
+  margin-top: 22px;
+}
+
+.cancel-dialog {
+  width: min(490px, calc(100% - 32px));
+  max-height: min(720px, calc(100% - 32px));
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--stone);
+  border-radius: 28px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(43, 47, 38, 0.2);
+}
+
+.cancel-dialog::backdrop {
+  background: rgba(43, 47, 38, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.cancel-dialog-inner {
+  position: relative;
+  padding: 38px;
+}
+
+.cancel-dialog-inner > .eyebrow {
+  margin-bottom: 8px;
+}
+
+.cancel-dialog-inner h2 {
+  margin-bottom: 10px;
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.cancel-booking-summary {
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cancel-dialog-inner > p:not(.eyebrow) {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.cancel-warning {
+  padding: 12px 14px;
+  border: 1px solid var(--clay);
+  border-radius: 14px;
+  background: var(--clay);
+  color: var(--ink) !important;
+}
+
+.cancel-warning[hidden] {
+  display: none;
+}
+
+.cancel-dialog-actions {
+  display: flex;
+  margin-top: 20px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 9px;
 }
 
 .confirmation-empty-state {
@@ -2434,8 +2622,11 @@ h2 {
   }
 
   .header-inner {
-    min-height: 70px;
+    min-height: 0;
+    padding-block: 9px;
     gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .wordmark {
@@ -2449,7 +2640,10 @@ h2 {
   }
 
   .header-actions {
+    width: 100%;
     gap: 7px;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .button-small {
@@ -2967,6 +3161,57 @@ h2 {
 
   .confirmation-empty-state h2 {
     font-size: 36px;
+  }
+
+  .bookings-main {
+    min-height: 0;
+    padding-block: 30px 55px;
+  }
+
+  .booking-card {
+    padding: 19px 16px;
+    border-radius: 22px;
+  }
+
+  .booking-card-heading h2 {
+    font-size: 21px;
+  }
+
+  .booking-confirmation-number {
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+
+  .booking-details {
+    margin-top: 14px;
+  }
+
+  .booking-details dd {
+    font-size: 12px;
+  }
+
+  .booking-actions {
+    flex-direction: column;
+  }
+
+  .booking-actions .button {
+    width: 100%;
+  }
+
+  .cancel-dialog-inner {
+    padding: 32px 22px 24px;
+  }
+
+  .cancel-dialog-inner h2 {
+    font-size: 29px;
+  }
+
+  .cancel-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-dialog-actions .button {
+    width: 100%;
   }
 
   .reserve-area {

@@ -14,6 +14,7 @@ fleaspace/
 ├── markets.html        Find a market
 ├── stalls.html         Choose a stall
 ├── confirmation.html   Reservation confirmation
+├── my-bookings.html    View and manage bookings
 ├── css/
 │   └── styles.css      Shared design system and responsive styles
 ├── js/
@@ -24,7 +25,7 @@ fleaspace/
 
 ## Run locally
 
-Open `index.html` in a browser. No server, build step, package installation, or framework is required. Reservations are stored in browser local storage. Use the “Reset demo data” link in the footer to clear the saved reservation and try the booking flow again. On the confirmation page, “Download PDF” opens the print dialog; choose **Save as PDF**.
+Open `index.html` in a browser. No server, build step, package installation, or framework is required. Bookings are stored as an array in browser local storage; existing single-booking data is migrated automatically. Use “My bookings” to view or cancel bookings. The “Reset demo data” link in the footer clears all bookings. On a confirmation page, “Add to calendar” downloads an `.ics` event, “Google Calendar” opens a prefilled event, and “Download PDF” opens the print dialog; choose **Save as PDF**.
 
 ## Publish with GitHub Pages
 

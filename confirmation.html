@@ -28,6 +28,7 @@
         </a>
         <nav class="header-actions" aria-label="Main navigation">
           <a class="button button-primary button-small" href="markets.html">Book a spot</a>
+          <a class="button button-secondary button-small" href="my-bookings.html">My bookings</a>
           <button class="button button-secondary button-small" type="button" data-contact-open>Contact</button>
         </nav>
       </div>
@@ -94,14 +95,17 @@
           </div>
 
           <div class="confirmation-actions" data-confirmation-actions>
-            <button class="button button-primary button-arrow print-button" type="button" data-print>
+            <a class="button button-primary" href="my-bookings.html">View my bookings</a>
+            <a class="button button-secondary" href="markets.html">Book another stall</a>
+            <button class="button button-secondary" type="button" data-add-calendar>Add to calendar</button>
+            <a class="button button-secondary" data-google-calendar href="https://calendar.google.com/calendar/render?action=TEMPLATE" target="_blank" rel="noreferrer">Google Calendar</a>
+            <button class="button button-secondary button-arrow print-button" type="button" data-print>
               Download PDF
               <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v10m-4-4 4 4 4-4M4 16h12"/></svg>
             </button>
             <button class="button button-secondary contact-organizer" type="button" data-contact-open>
               Questions? Contact the organizer
             </button>
-            <a class="button button-secondary home-button" href="index.html">Back to home</a>
             <p class="print-helper">Opens print: choose Save as PDF</p>
           </div>
         </article>
