@@ -27,7 +27,7 @@ fleaspace/
 
 ## Run locally
 
-Open `index.html` in a browser. No server, build step, package installation, or framework is required. Bookings are stored as an array in browser local storage; existing single-booking data is migrated automatically. Use “My bookings” to view or cancel bookings. The “Reset demo data” link in the footer clears all bookings. On a confirmation page, “Add to calendar” downloads an `.ics` event, “Google Calendar” opens a prefilled event, and “Download PDF” opens the print dialog; choose **Save as PDF**.
+Open `index.html` in a browser. No server, build step, package installation, or framework is required. Create a demo account with any name and email address, or sign in with an account already created in that browser; no password is requested. Account names and email addresses, the current demo session, and bookings are stored only in that browser's local storage and are never sent to a server. Bookings are associated with the signed-in email, while stall availability is shared across all demo accounts in that browser. Existing single-booking data is migrated automatically, and bookings without an owner are assigned to the first account that signs in or is created. This is a local prototype, not a real authentication or payment system, and data does not sync across browsers or devices. Use “My bookings” to view or cancel your bookings. “Reset demo data” asks for confirmation, then clears bookings, accounts, and the current session. On a confirmation page, “Add to calendar” downloads an `.ics` event, “Google Calendar” opens a prefilled event, and “Download PDF” opens the print dialog; choose **Save as PDF**.
 
 ## Publish with GitHub Pages
 

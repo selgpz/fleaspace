@@ -11,11 +11,222 @@
   const reserveError = document.querySelector("[data-reserve-error]");
   const selectionLimitMessage = document.querySelector("[data-selection-limit]");
   const dateSelector = document.querySelector("[data-date-selector]");
+  const accountDialog = document.createElement("dialog");
+  accountDialog.className = "account-dialog";
+  accountDialog.setAttribute("aria-labelledby", "account-dialog-title");
+  accountDialog.setAttribute("aria-describedby", "account-demo-note");
+  accountDialog.dataset.accountDialog = "";
+  accountDialog.innerHTML = `
+    <div class="account-dialog-inner">
+      <button class="dialog-close" type="button" aria-label="Close account dialog" data-account-close>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+      </button>
+      <p class="eyebrow">Your FleaSpace account</p>
+      <h2 id="account-dialog-title" data-account-title>Sign in</h2>
+      <div class="account-tabs" role="group" aria-label="Account action">
+        <button type="button" class="account-tab" data-account-mode="create" aria-pressed="false">Create account</button>
+        <button type="button" class="account-tab" data-account-mode="signin" aria-pressed="true">Sign in</button>
+      </div>
+      <p class="account-demo-note" id="account-demo-note">Demo account: no password needed. Your details stay in this browser and are never sent anywhere. You can use any name and email.</p>
+      <form data-account-form novalidate>
+        <div class="account-field" data-account-name-field hidden>
+          <label for="account-name">Name</label>
+          <input id="account-name" name="name" autocomplete="name" aria-describedby="account-error">
+        </div>
+        <div class="account-field">
+          <label for="account-email">Email</label>
+          <input id="account-email" name="email" type="email" autocomplete="email" inputmode="email" aria-describedby="account-error">
+        </div>
+        <p class="account-error" id="account-error" data-account-error role="alert" hidden></p>
+        <button class="button button-primary account-submit" type="submit" data-account-submit>Sign in</button>
+      </form>
+    </div>`;
+  document.body.append(accountDialog);
+
   let activeMarket = null;
   let activeDate = null;
   let selectedStalls = new Set();
   let takenStalls = new Set();
   let pendingCancellation = null;
+  let currentAccount = null;
+  let accountDialogMode = "signin";
+  let accountDialogReturnFocus = null;
+  const accountFeedback = document.createElement("p");
+  accountFeedback.className = "account-feedback";
+  accountFeedback.setAttribute("role", "status");
+  accountFeedback.setAttribute("aria-live", "polite");
+  accountFeedback.hidden = true;
+  document.body.append(accountFeedback);
+
+  function showAccountMessage(message) {
+    accountFeedback.textContent = message;
+    accountFeedback.hidden = false;
+    window.clearTimeout(showAccountMessage.timeout);
+    showAccountMessage.timeout = window.setTimeout(() => {
+      accountFeedback.hidden = true;
+    }, 3500);
+    if (status) {
+      status.textContent = message;
+    }
+  }
+
+  function getAccounts() {
+    try {
+      const saved = window.localStorage.getItem("fleaspace.accounts");
+      if (!saved) {
+        return [];
+      }
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) {
+        throw new TypeError("Saved account data must be an array.");
+      }
+      return parsed.filter((account) => account
+        && typeof account.name === "string"
+        && typeof account.email === "string")
+        .map((account) => ({ name: account.name, email: account.email.toLowerCase() }));
+    } catch (error) {
+      console.error("Unable to read FleaSpace account data.", error);
+      showAccountMessage("Demo account data could not be read in this browser.");
+      return null;
+    }
+  }
+
+  function saveAccounts(accounts) {
+    try {
+      window.localStorage.setItem("fleaspace.accounts", JSON.stringify(accounts.map(({ name, email }) => ({
+        name,
+        email,
+      }))));
+      return true;
+    } catch (error) {
+      console.error("Unable to save FleaSpace account data.", error);
+      showAccountMessage("Demo account details could not be saved in this browser.");
+      return false;
+    }
+  }
+
+  function getSavedSessionEmail() {
+    try {
+      const saved = window.localStorage.getItem("fleaspace.session");
+      if (!saved) {
+        return null;
+      }
+      const session = JSON.parse(saved);
+      return typeof session?.email === "string" ? session.email.toLowerCase() : null;
+    } catch (error) {
+      console.error("Unable to read FleaSpace session data.", error);
+      showAccountMessage("Your demo sign-in could not be read in this browser.");
+      return null;
+    }
+  }
+
+  function saveSession(email) {
+    try {
+      window.localStorage.setItem("fleaspace.session", JSON.stringify({ email }));
+      return true;
+    } catch (error) {
+      console.error("Unable to save FleaSpace session data.", error);
+      showAccountMessage("Your demo sign-in could not be saved in this browser.");
+      return false;
+    }
+  }
+
+  function loadCurrentAccount() {
+    const email = getSavedSessionEmail();
+    if (!email) {
+      return null;
+    }
+    const accounts = getAccounts();
+    if (!accounts) {
+      return null;
+    }
+    return accounts.find((account) => account.email === email) || null;
+  }
+
+  function claimLegacyReservations(email) {
+    const reservations = getReservations();
+    let changed = false;
+    reservations.forEach((reservation) => {
+      if (typeof reservation.ownerEmail !== "string" || !reservation.ownerEmail.trim()) {
+        reservation.ownerEmail = email;
+        changed = true;
+      }
+    });
+    return !changed || saveReservations(reservations);
+  }
+
+  function setCurrentAccount(account) {
+    currentAccount = account;
+    renderAccountHeader();
+    renderBookings();
+    renderConfirmation();
+  }
+
+  function renderAccountHeader() {
+    document.querySelectorAll("nav.header-actions").forEach((nav) => {
+      nav.querySelector("[data-account-controls]")?.remove();
+      const controls = document.createElement("span");
+      controls.className = "account-controls";
+      controls.dataset.accountControls = "";
+
+      if (currentAccount) {
+        const chip = document.createElement("span");
+        chip.className = "account-chip";
+        const initial = document.createElement("span");
+        initial.className = "account-initial";
+        initial.setAttribute("aria-hidden", "true");
+        initial.textContent = currentAccount.name.trim().charAt(0).toUpperCase();
+        const name = document.createElement("span");
+        name.textContent = currentAccount.name.trim().split(/\s+/)[0];
+        chip.append(initial, name);
+        const signOut = document.createElement("button");
+        signOut.className = "button button-secondary button-small";
+        signOut.type = "button";
+        signOut.dataset.accountSignout = "";
+        signOut.textContent = "Sign out";
+        controls.append(chip, signOut);
+      } else {
+        const signIn = document.createElement("button");
+        signIn.className = "button button-secondary button-small";
+        signIn.type = "button";
+        signIn.dataset.accountOpen = "";
+        signIn.textContent = "Sign in";
+        controls.append(signIn);
+      }
+      nav.append(controls);
+    });
+  }
+
+  function setAccountDialogMode(mode, title = null) {
+    accountDialogMode = mode;
+    const titleElement = accountDialog.querySelector("[data-account-title]");
+    const nameField = accountDialog.querySelector("[data-account-name-field]");
+    const nameInput = accountDialog.querySelector("#account-name");
+    const submit = accountDialog.querySelector("[data-account-submit]");
+    titleElement.textContent = title || (mode === "create" ? "Create your account" : "Sign in");
+    nameField.hidden = mode !== "create";
+    nameInput.required = mode === "create";
+    submit.textContent = mode === "create" ? "Create account" : "Sign in";
+    accountDialog.querySelectorAll("[data-account-mode]").forEach((button) => {
+      const selected = button.dataset.accountMode === mode;
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    accountDialog.querySelector("[data-account-error]").hidden = true;
+    accountDialog.querySelector("#account-name").removeAttribute("aria-invalid");
+    accountDialog.querySelector("#account-email").removeAttribute("aria-invalid");
+  }
+
+  function openAccountDialog(mode, title = null, returnFocus = document.activeElement) {
+    setAccountDialogMode(mode, title);
+    accountDialogReturnFocus = returnFocus instanceof HTMLElement ? returnFocus : null;
+    if (!accountDialog.open) {
+      accountDialog.showModal();
+    }
+    const focusTarget = mode === "create"
+      ? accountDialog.querySelector("#account-name")
+      : accountDialog.querySelector("#account-email");
+    focusTarget.focus();
+  }
 
   function getReservations() {
     try {
@@ -79,9 +290,12 @@
   function getCurrentReservation(reservations = getReservations()) {
     const confirmationNumber = new URLSearchParams(window.location.search).get("confirmation");
     if (confirmationNumber) {
-      return reservations.find((reservation) => reservation.confirmationNumber === confirmationNumber) || null;
+      return reservations.find((reservation) => currentAccount
+        && reservation.confirmationNumber === confirmationNumber
+        && reservation.ownerEmail === currentAccount.email) || null;
     }
-    return reservations[reservations.length - 1] || null;
+    return [...reservations].reverse().find((reservation) => currentAccount
+      && reservation.ownerEmail === currentAccount.email) || null;
   }
 
   function getDateForMarket(market, date) {
@@ -377,6 +591,11 @@
       || [...selectedStalls].some((number) => takenStalls.has(number))) {
       return;
     }
+    if (!currentAccount) {
+      reserveAfterAccount = true;
+      openAccountDialog("signin", "Sign in to reserve your stall", reserveButton);
+      return;
+    }
 
     const stalls = [...selectedStalls].sort((a, b) => a - b);
     const reservation = {
@@ -386,6 +605,7 @@
       stalls,
       total: activeMarket.fee * stalls.length,
       confirmationNumber: createConfirmationNumber(),
+      ownerEmail: currentAccount.email,
     };
 
     const reservations = getReservations();
@@ -447,6 +667,13 @@
         element.textContent = value;
       }
     });
+    const account = getAccounts()?.find((item) => item.email === reservation.ownerEmail);
+    const bookedBy = document.querySelector("[data-confirmation-account]");
+    if (bookedBy) {
+      bookedBy.textContent = account
+        ? `Booked by ${account.name} · ${account.email}`
+        : `Booked by ${reservation.ownerEmail || "a FleaSpace demo account"}`;
+    }
     if (message) {
       message.textContent = "Reservation confirmed. No need to wait for a reply.";
     }
@@ -510,7 +737,23 @@
     if (!bookingsList || !bookingsEmpty) {
       return;
     }
-    const reservations = getReservations();
+    const signInButton = bookingsEmpty.querySelector("[data-bookings-signin]");
+    if (signInButton) {
+      signInButton.hidden = Boolean(currentAccount);
+    }
+    const emptyTitle = bookingsEmpty.querySelector("[data-bookings-empty-title]");
+    const emptyCopy = bookingsEmpty.querySelector("[data-bookings-empty-copy]");
+    if (emptyTitle) {
+      emptyTitle.innerHTML = currentAccount ? "No bookings <em>just yet.</em>" : "Sign in to see <em>your bookings.</em>";
+    }
+    if (emptyCopy) {
+      emptyCopy.textContent = currentAccount
+        ? "Choose a market, pick the stalls that suit you, and your bookings will be right here."
+        : "Sign in to view and manage your market bookings.";
+    }
+    const reservations = currentAccount
+      ? getReservations().filter((reservation) => reservation.ownerEmail === currentAccount.email)
+      : [];
     bookingsList.innerHTML = reservations.map((reservation) => {
       const details = getBookingDetails(reservation);
       if (!details) {
@@ -547,7 +790,8 @@
     if (!(cancelDialog instanceof HTMLDialogElement)) {
       return;
     }
-    const reservation = getReservations().find((item) => item.confirmationNumber === confirmationNumber);
+    const reservation = currentAccount && getReservations().find((item) => item.confirmationNumber === confirmationNumber
+      && item.ownerEmail === currentAccount.email);
     const details = reservation && getBookingDetails(reservation);
     if (!reservation || !details) {
       if (status) {
@@ -573,11 +817,12 @@
   }
 
   function cancelBooking() {
-    if (!pendingCancellation) {
+    if (!pendingCancellation || !currentAccount) {
       return;
     }
     const reservations = getReservations();
-    const updatedReservations = reservations.filter((item) => item.confirmationNumber !== pendingCancellation);
+    const updatedReservations = reservations.filter((item) => !(item.confirmationNumber === pendingCancellation
+      && item.ownerEmail === currentAccount.email));
     if (updatedReservations.length === reservations.length) {
       if (status) {
         status.textContent = "That booking could not be found.";
@@ -717,6 +962,72 @@
     }
   }
 
+  function showAccountError(message, invalidField = null) {
+    const error = accountDialog.querySelector("[data-account-error]");
+    error.textContent = message;
+    error.hidden = false;
+    if (invalidField) {
+      invalidField.setAttribute("aria-invalid", "true");
+      invalidField.focus();
+    }
+  }
+
+  function submitAccountForm(event) {
+    event.preventDefault();
+    const nameInput = accountDialog.querySelector("#account-name");
+    const emailInput = accountDialog.querySelector("#account-email");
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    accountDialog.querySelector("[data-account-error]").hidden = true;
+    nameInput.removeAttribute("aria-invalid");
+    emailInput.removeAttribute("aria-invalid");
+    if (accountDialogMode === "create" && !name) {
+      showAccountError("Enter your name to create an account.", nameInput);
+      return;
+    }
+    if (!emailIsValid) {
+      showAccountError("Enter a valid email address.", emailInput);
+      return;
+    }
+
+    const accounts = getAccounts();
+    if (!accounts) {
+      return;
+    }
+    let account;
+    if (accountDialogMode === "create") {
+      if (accounts.some((item) => item.email === email)) {
+        showAccountError("An account with this email already exists. Sign in instead.", emailInput);
+        return;
+      }
+      account = { name, email };
+      if (!saveAccounts([...accounts, account])) {
+        return;
+      }
+    } else {
+      account = accounts.find((item) => item.email === email);
+      if (!account) {
+        showAccountError("No demo account with this email. Create one first.", emailInput);
+        return;
+      }
+    }
+
+    if (!claimLegacyReservations(email) || !saveSession(email)) {
+      return;
+    }
+    const shouldReserve = reserveAfterAccount;
+    reserveAfterAccount = false;
+    setCurrentAccount(account);
+    accountDialog.close();
+    if (shouldReserve) {
+      reserveSelectedStall();
+    } else {
+      showAccountMessage(`Signed in as ${account.name}.`);
+    }
+  }
+
   document.addEventListener("pointerover", (event) => {
     const current = getMarketInteractionTarget(event.target);
     if (current?.marketId) {
@@ -731,6 +1042,53 @@
     }
   });
   document.addEventListener("focusout", handleMarketPointerOut);
+
+  accountDialog.querySelector("[data-account-form]").addEventListener("submit", submitAccountForm);
+  accountDialog.querySelectorAll("[data-account-mode]").forEach((button) => {
+    button.addEventListener("click", () => setAccountDialogMode(button.dataset.accountMode));
+  });
+  accountDialog.querySelector("[data-account-close]").addEventListener("click", () => accountDialog.close());
+  accountDialog.addEventListener("close", () => {
+    reserveAfterAccount = false;
+    if (accountDialogReturnFocus?.isConnected) {
+      accountDialogReturnFocus.focus();
+    }
+    accountDialogReturnFocus = null;
+  });
+  accountDialog.addEventListener("cancel", () => {
+    reserveAfterAccount = false;
+  });
+  accountDialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && accountDialog.open) {
+      event.preventDefault();
+      accountDialog.close();
+    }
+  });
+
+  let reserveAfterAccount = false;
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+    const signInButton = event.target.closest("[data-account-open], [data-bookings-signin]");
+    if (signInButton) {
+      reserveAfterAccount = false;
+      openAccountDialog("signin", "Sign in", signInButton);
+      return;
+    }
+    const signOutButton = event.target.closest("[data-account-signout]");
+    if (signOutButton) {
+      try {
+        window.localStorage.removeItem("fleaspace.session");
+      } catch (error) {
+        console.error("Unable to clear FleaSpace session data.", error);
+        showAccountMessage("You could not be signed out in this browser.");
+        return;
+      }
+      setCurrentAccount(null);
+      showAccountMessage("You've been signed out.");
+    }
+  });
 
   document.querySelectorAll("[data-contact-open]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -788,26 +1146,29 @@
   document.querySelectorAll("[data-reset-demo]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
+      if (!window.confirm("Reset demo data? This will clear all bookings, demo accounts, and the current sign-in.")) {
+        return;
+      }
       try {
-        if (!saveReservations([])) {
-          return;
-        }
+        window.localStorage.removeItem(window.FLEASPACE_RESERVATION_KEY);
+        window.localStorage.removeItem("fleaspace.accounts");
+        window.localStorage.removeItem("fleaspace.session");
+        currentAccount = null;
+        renderAccountHeader();
         renderBookings();
         renderMarketCards();
         renderStallPage();
         renderConfirmation();
-        if (status) {
-          status.textContent = "All demo bookings have been reset.";
-        }
+        showAccountMessage("All demo bookings and accounts have been reset.");
       } catch (error) {
         console.error("Unable to reset FleaSpace demo data.", error);
-        if (status) {
-          status.textContent = "Demo data could not be reset in this browser.";
-        }
+        showAccountMessage("Demo data could not be reset in this browser.");
       }
     });
   });
 
+  currentAccount = loadCurrentAccount();
+  renderAccountHeader();
   renderMarketCards();
   renderStallPage();
   renderConfirmation();

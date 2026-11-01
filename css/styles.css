@@ -121,6 +121,36 @@ svg {
   gap: 10px;
 }
 
+.account-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-chip {
+  display: inline-flex;
+  min-height: 36px;
+  padding: 4px 10px 4px 5px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--stone);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.account-initial {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sage-light);
+  font-size: 11px;
+}
+
 .button {
   display: inline-flex;
   min-height: 50px;
@@ -137,6 +167,10 @@ svg {
   text-align: center;
   text-decoration: none;
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.button[hidden] {
+  display: none;
 }
 
 .button:hover {
@@ -647,6 +681,137 @@ h2 {
 .contact-dialog::backdrop {
   background: rgba(43, 47, 38, 0.48);
   backdrop-filter: blur(3px);
+}
+
+.account-dialog {
+  width: min(460px, calc(100% - 32px));
+  max-height: min(720px, calc(100% - 32px));
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--stone);
+  border-radius: 28px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(43, 47, 38, 0.2);
+}
+
+.account-dialog::backdrop {
+  background: rgba(43, 47, 38, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.account-dialog-inner {
+  position: relative;
+  padding: 38px;
+}
+
+.account-dialog-inner > .eyebrow {
+  margin-bottom: 8px;
+}
+
+.account-dialog-inner h2 {
+  max-width: calc(100% - 34px);
+  margin-bottom: 18px;
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.account-tabs {
+  display: flex;
+  margin-bottom: 16px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid var(--stone);
+  border-radius: 999px;
+  background: var(--mist);
+}
+
+.account-tab {
+  min-height: 40px;
+  padding: 8px 12px;
+  flex: 1 1 50%;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.account-tab[aria-pressed="true"] {
+  border-color: var(--stone);
+  background: var(--paper);
+}
+
+.account-demo-note {
+  margin: 0 0 19px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.account-field {
+  display: grid;
+  margin-bottom: 14px;
+  gap: 6px;
+}
+
+.account-field[hidden],
+.account-error[hidden] {
+  display: none;
+}
+
+.account-field label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.account-field input {
+  width: 100%;
+  min-height: 47px;
+  padding: 11px 13px;
+  border: 1px solid var(--stone);
+  border-radius: 13px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.account-field input[aria-invalid="true"] {
+  border-color: var(--clay);
+}
+
+.account-error {
+  margin: 0 0 13px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.account-submit {
+  width: 100%;
+}
+
+.account-feedback {
+  position: fixed;
+  z-index: 30;
+  right: 20px;
+  bottom: 20px;
+  max-width: min(420px, calc(100% - 40px));
+  margin: 0;
+  padding: 12px 17px;
+  border: 1px solid var(--stone);
+  border-radius: 15px;
+  background: var(--paper);
+  box-shadow: var(--shadow-soft);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-feedback[hidden] {
+  display: none;
 }
 
 .dialog-inner {
@@ -2290,6 +2455,20 @@ h2 {
   line-height: 1.55;
 }
 
+.confirmation-account {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.confirmation-demo-note {
+  margin: 3px 0 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .berlin-map-card {
   position: sticky;
   top: 24px;
@@ -2668,9 +2847,19 @@ h2 {
     flex-wrap: wrap;
   }
 
+  .account-controls {
+    gap: 6px;
+  }
+
+  .account-chip {
+    min-height: 34px;
+    padding-right: 8px;
+    font-size: 11px;
+  }
+
   .button-small {
     min-height: 44px;
-    padding: 9px 12px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 
@@ -2846,6 +3035,14 @@ h2 {
 
   .dialog-inner {
     padding: 30px 23px 25px;
+  }
+
+  .account-dialog-inner {
+    padding: 31px 23px 25px;
+  }
+
+  .account-dialog-inner h2 {
+    font-size: 30px;
   }
 
   .dialog-icon {
@@ -3117,6 +3314,10 @@ h2 {
     font-size: 12px;
   }
 
+  .confirmation-account {
+    font-size: 11px;
+  }
+
   .confirmation-number {
     width: fit-content;
     margin-left: 66px;
@@ -3299,6 +3500,7 @@ h2 {
   .site-footer,
   .skip-link,
   .contact-dialog,
+  .account-dialog,
   [data-app-status] {
     display: none !important;
   }
